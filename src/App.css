@@ -4,9 +4,8 @@
   --text-main: #f0f0f0;
   --gold: #d4af37;
   
-  /* RESTORED: The Royal Font */
+  /* FONTS: Royal (Display) & Modern (Body) */
   --font-display: 'Cinzel Decorative', cursive;
-  /* Body text remains clean */
   --font-body: 'Manrope', sans-serif;
 }
 
@@ -23,7 +22,7 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
 .hero-title-container { display: flex; flex-wrap: wrap; justify-content: center; }
 .hero-char-wrapper { display: flex; align-items: center; cursor: default; position: relative; overflow: hidden; }
 
-/* RESTORED FONT HERE */
+/* DECORATIVE FONT FOR HERO */
 .hero-char {
   font-family: var(--font-display);
   font-weight: 700;
@@ -34,7 +33,7 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
 }
 
 .hero-meaning {
-  font-family: var(--font-body); /* Meaning keeps clean font for contrast */
+  font-family: var(--font-body); 
   font-size: 1rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em;
   max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transform: translateX(-20px);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -47,22 +46,27 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
 
 .hero-sub { margin-top: 40px; font-weight: 600; letter-spacing: 0.4em; font-size: 0.9rem; color: #666; font-family: var(--font-body); }
 
-/* --- MARQUEE --- */
+/* --- MARQUEE (LAG FIXED) --- */
 .marquee-section { padding: 80px 0; overflow: hidden; display: flex; flex-direction: column; gap: 20px; }
 .parallax { overflow: hidden; letter-spacing: -2px; line-height: 0.8; margin: 0; white-space: nowrap; display: flex; flex-wrap: nowrap; }
 
-/* RESTORED FONT HERE */
+/* Optimized Scroller for GPU */
 .scroller { 
   font-family: var(--font-display); 
   font-weight: 700; 
   text-transform: uppercase; 
   font-size: 8vw; 
   display: flex; white-space: nowrap; flex-wrap: nowrap; 
+  
+  /* GPU Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .scroller span { display: block; margin-right: 50px; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); transition: color 0.3s; }
 .scroller span:hover { color: #fff; }
 
-/* --- SERVICES (HOVER LIST) --- */
+/* --- SERVICES --- */
 .services-container { padding: 100px 10vw; position: relative; }
 .section-title { 
   font-family: var(--font-display); 
@@ -77,7 +81,8 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
   position: relative; padding: 50px 0; display: flex; justify-content: space-between; align-items: flex-end;
   cursor: pointer; transition: all 0.3s ease;
 }
-/* RESTORED FONT HERE */
+
+/* DECORATIVE FONT FOR SERVICES */
 .service-text h3 { 
   font-family: var(--font-display);
   font-size: 3rem; 
@@ -86,20 +91,19 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
 }
 .service-cat { font-family: var(--font-body); color: #666; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.9rem; margin-top: 10px; display: block; }
 
-/* Floating Image */
 .service-img-float {
   position: absolute; top: 0; left: 0; width: 350px; height: 250px; pointer-events: none; z-index: 10;
   overflow: hidden; border-radius: 5px; transform: translate(-50%, -50%);
 }
 .service-img-float img { width: 100%; height: 100%; object-fit: cover; }
 
-/* --- HORIZONTAL SCROLL (PORTFOLIO) --- */
+/* --- HORIZONTAL SCROLL --- */
 .horizontal-scroll-section { height: 300vh; position: relative; }
 .sticky-wrapper {
   position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden;
   background: #111;
 }
-/* RESTORED FONT HERE */
+/* DECORATIVE FONT FOR TITLE */
 .horizontal-title {
   position: absolute; top: 10vh; left: 5vw; 
   font-family: var(--font-display);
@@ -113,13 +117,15 @@ body { background-color: var(--bg); color: var(--text-main); font-family: var(--
 .card-img-box { width: 100%; height: 90%; overflow: hidden; background: #222; margin-bottom: 20px; }
 .card-img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.5s, transform 0.5s; }
 .horizontal-card:hover img { filter: grayscale(0%); transform: scale(1.05); }
-/* RESTORED FONT HERE */
+
+/* DECORATIVE FONT FOR CARD */
 .horizontal-card h4 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; color: #fff; }
 
 /* --- CONTACT --- */
 .new-contact { height: 90vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a1a 0%, #000 80%); position: relative; overflow: hidden; text-align: center; }
 .contact-header p { font-family: var(--font-body); color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; }
-/* RESTORED FONT HERE */
+
+/* DECORATIVE FONT FOR CONTACT */
 .contact-header h2 { 
   font-family: var(--font-display);
   font-weight: 700; 

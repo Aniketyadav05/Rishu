@@ -8,8 +8,13 @@ import {
   useAnimationFrame, 
   useMotionValue 
 } from 'framer-motion';
-import { wrap } from '@motionone/utils';
 import './App.css';
+
+// --- UTILITY: Wrap Function (Internalized to fix import error) ---
+const wrap = (min, max, v) => {
+  const rangeSize = max - min;
+  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
+};
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +43,7 @@ export default function App() {
       >
         <div className="loader-content">
           <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5 }} className="loader-line" />
-          <h2 className="loader-text">RISHU JAISWAL</h2>
+          <h2 className="loader-text">ORCHESTRATING EXCELLENCE</h2>
         </div>
       </motion.div>
 
@@ -62,7 +67,7 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* --- VELOCITY MARQUEE --- */}
+      {/* --- VELOCITY MARQUEE (LAG FIXED) --- */}
       <section className="marquee-section">
         <VelocityText baseVelocity={-2}>Strategy Design Execution Hospitality</VelocityText>
         <VelocityText baseVelocity={2}>Luxury Corporate Bespoke Grandeur</VelocityText>
@@ -121,7 +126,7 @@ export default function App() {
 
 /* ================= COMPONENT LOGIC ================= */
 
-// 1. HERO CHARACTERS (Modern Font)
+// 1. HERO CHARACTERS
 function HeroChar({ char, meaning, delay }) {
   return (
     <div style={{ overflow: 'hidden' }}>
@@ -138,21 +143,29 @@ function HeroChar({ char, meaning, delay }) {
   );
 }
 
-// 2. VELOCITY MARQUEE
+// 2. OPTIMIZED VELOCITY MARQUEE
 function VelocityText({ children, baseVelocity = 100 }) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  
+  // Smoother spring physics to prevent jitter
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 300 
+  });
+  
   const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false });
-  const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
+  const x = useTransform(baseX, (v) => `${wrap(0, -25, v)}%`); // Wrap 0 to -25% for 4 items
   const directionFactor = useRef(1);
 
   useAnimationFrame((t, delta) => {
     let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
-    if (velocityFactor.get() < 0) directionFactor.current = -1;
-    else if (velocityFactor.get() > 0) directionFactor.current = 1;
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
+    if (velocityFactor.get() !== 0) {
+      if (velocityFactor.get() < 0) directionFactor.current = -1;
+      else if (velocityFactor.get() > 0) directionFactor.current = 1;
+      moveBy += directionFactor.current * moveBy * velocityFactor.get();
+    }
     baseX.set(baseX.get() + moveBy);
   });
 
@@ -168,7 +181,7 @@ function VelocityText({ children, baseVelocity = 100 }) {
   );
 }
 
-// 3. SERVICE ITEM (Hover Image Reveal)
+// 3. SERVICE ITEM
 function ServiceItem({ title, cat, img }) {
   const [isHovered, setHovered] = useState(false);
   const mouseX = useMotionValue(0);
@@ -194,7 +207,6 @@ function ServiceItem({ title, cat, img }) {
         <span className="service-cat">{cat}</span>
       </div>
 
-      {/* Floating Image */}
       <motion.div
         className="service-img-float"
         style={{ 
@@ -210,7 +222,7 @@ function ServiceItem({ title, cat, img }) {
   );
 }
 
-// 4. HORIZONTAL SCROLL SECTION
+// 4. HORIZONTAL SCROLL
 function HorizontalScrollSection() {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: targetRef });
