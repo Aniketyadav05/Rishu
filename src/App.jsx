@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import './App.css'; // Ensure your CSS is pasted here
+import './App.css'; 
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   
-  // Refs for direct DOM manipulation (Performance for Cursor)
+  // Refs for direct DOM manipulation
   const dotRef = useRef(null);
   const outlineRef = useRef(null);
   const glowRef = useRef(null);
   
-  // PRELOADER LOGIC
+  // PRELOADER
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -19,44 +19,51 @@ export default function App() {
 
   // CURSOR & SCROLL LOGIC
   useEffect(() => {
-    if (loading) return; // Don't run logic until loaded
+    if (loading) return; 
 
-    // --- Cursor Logic ---
-    let mouse = { x: 0, y: 0 };
-    let current = { x: 0, y: 0 };
+    // CHECK: Only run cursor logic on larger screens (Desktops/Laptops)
+    const isDesktop = window.matchMedia("(min-width: 769px)").matches;
+
     let requestRef;
+    let onMouseMove;
 
-    const onMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
+    if (isDesktop) {
+        // --- Cursor Logic (Only for Desktop) ---
+        let mouse = { x: 0, y: 0 };
+        let current = { x: 0, y: 0 };
 
-    const animateCursor = () => {
-      const dot = dotRef.current;
-      const outline = outlineRef.current;
-      const glow = glowRef.current;
+        onMouseMove = (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        };
 
-      if (dot && outline && glow) {
-        const glowOffset = 300;
-        const dotOffset = 3;
-        
-        glow.style.transform = `translate3d(${mouse.x - glowOffset}px, ${mouse.y - glowOffset}px, 0)`;
-        dot.style.transform = `translate3d(${mouse.x - dotOffset}px, ${mouse.y - dotOffset}px, 0)`;
+        const animateCursor = () => {
+          const dot = dotRef.current;
+          const outline = outlineRef.current;
+          const glow = glowRef.current;
 
-        const speed = 0.15;
-        current.x += (mouse.x - current.x) * speed;
-        current.y += (mouse.y - current.y) * speed;
-        const outlineOffset = 20; 
-        
-        outline.style.transform = `translate3d(${current.x - outlineOffset}px, ${current.y - outlineOffset}px, 0)`;
-      }
-      requestRef = requestAnimationFrame(animateCursor);
-    };
+          if (dot && outline && glow) {
+            const glowOffset = 300;
+            const dotOffset = 3;
+            
+            glow.style.transform = `translate3d(${mouse.x - glowOffset}px, ${mouse.y - glowOffset}px, 0)`;
+            dot.style.transform = `translate3d(${mouse.x - dotOffset}px, ${mouse.y - dotOffset}px, 0)`;
 
-    window.addEventListener('mousemove', onMouseMove);
-    requestRef = requestAnimationFrame(animateCursor);
+            const speed = 0.15;
+            current.x += (mouse.x - current.x) * speed;
+            current.y += (mouse.y - current.y) * speed;
+            const outlineOffset = 20; 
+            
+            outline.style.transform = `translate3d(${current.x - outlineOffset}px, ${current.y - outlineOffset}px, 0)`;
+          }
+          requestRef = requestAnimationFrame(animateCursor);
+        };
 
-    // --- Hover Triggers ---
+        window.addEventListener('mousemove', onMouseMove);
+        requestRef = requestAnimationFrame(animateCursor);
+    }
+
+    // --- Hover Triggers (Logic remains generally safe) ---
     const triggers = document.querySelectorAll('.hover-trigger, a, button');
     const addHover = () => document.body.classList.add('hovering');
     const removeHover = () => document.body.classList.remove('hovering');
@@ -70,19 +77,21 @@ export default function App() {
     const revealOnScroll = () => {
       const reveals = document.querySelectorAll('.reveal');
       reveals.forEach((reveal) => {
-        if (reveal.getBoundingClientRect().top < window.innerHeight - 100) {
+        if (reveal.getBoundingClientRect().top < window.innerHeight - 50) {
           reveal.classList.add('active');
         }
       });
     };
     window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll(); // Trigger once on load
+    revealOnScroll(); 
 
     // Cleanup
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      if (isDesktop) {
+          window.removeEventListener('mousemove', onMouseMove);
+          cancelAnimationFrame(requestRef);
+      }
       window.removeEventListener('scroll', revealOnScroll);
-      cancelAnimationFrame(requestRef);
       triggers.forEach(t => {
         t.removeEventListener('mouseenter', addHover);
         t.removeEventListener('mouseleave', removeHover);
@@ -103,7 +112,7 @@ export default function App() {
         <div className="loader-text">ORCHESTRATING EXCELLENCE</div>
       </div>
 
-      {/* Cursor Elements */}
+      {/* Cursor Elements (Visually hidden on mobile via CSS) */}
       <div ref={dotRef} className="cursor-dot"></div>
       <div ref={outlineRef} className="cursor-outline"></div>
       <div ref={glowRef} className="cursor-glow"></div>
@@ -144,8 +153,8 @@ export default function App() {
       {/* Services Section */}
       <section className="section-padding">
         <div className="reveal">
-          <h2 style={{ fontSize: '3rem', marginBottom: '20px' }}>The Craft</h2>
-          <p style={{ color: '#888', maxWidth: '500px' }}>
+          <h2 className="section-header-title">The Craft</h2>
+          <p className="section-header-desc">
             A comprehensive suite of management solutions for the discerning client.
           </p>
         </div>
@@ -160,7 +169,7 @@ export default function App() {
       {/* Portfolio Section */}
       <section className="section-padding">
         <div className="reveal">
-          <h2 style={{ fontSize: '3rem', marginBottom: '20px' }}>Selected Works</h2>
+          <h2 className="section-header-title">Selected Works</h2>
         </div>
 
         <div className="portfolio-grid">
@@ -189,20 +198,19 @@ export default function App() {
 
       {/* Contact Section */}
       <section className="contact-section reveal">
-        <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>Let's Create History</h2>
+        <h2 className="contact-title">Let's Create History</h2>
         <p style={{ marginTop: '20px', color: '#666' }}>Jaipur, India · Available Worldwide</p>
-        <a href="mailto:rishu@email.com" className="cta-button hover-trigger">Inquire Now</a>
+        <a href="mailto:rishu541232@gmail.com" className="cta-button hover-trigger">Inquire Now</a>
       </section>
 
       <footer>
         <div>© 2025 Rishu Jaiswal</div>
-        <div>Luxury Event Management</div>
       </footer>
     </>
   );
 }
 
-// --- Helper Components to keep code clean ---
+// --- Helper Components ---
 
 function HeroChar({ char, meaning }) {
   return (
