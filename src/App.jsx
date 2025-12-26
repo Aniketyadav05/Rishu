@@ -19,7 +19,54 @@ const wrap = (min, max, v) => {
 export default function App() {
   const [loading, setLoading] = useState(true);
   
-  // PRELOADER
+  // --- CURSOR REFS ---
+  const dotRef = useRef(null);
+  const outlineRef = useRef(null);
+  const glowRef = useRef(null);
+
+  // --- CURSOR LOGIC ---
+  useEffect(() => {
+    // Disable on mobile
+    if (window.matchMedia("(max-width: 768px)").matches) return;
+
+    let mouse = { x: 0, y: 0 };
+    let current = { x: 0, y: 0 };
+    let reqId;
+
+    const manageMouseMove = (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+
+    const animate = () => {
+      const dot = dotRef.current;
+      const outline = outlineRef.current;
+      const glow = glowRef.current;
+
+      if (dot && outline && glow) {
+        // Dot & Glow follow instantly
+        dot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate(-50%, -50%)`;
+        glow.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate(-50%, -50%)`;
+
+        // Outline follows with delay (Smooth Physics)
+        const speed = 0.15;
+        current.x += (mouse.x - current.x) * speed;
+        current.y += (mouse.y - current.y) * speed;
+        outline.style.transform = `translate3d(${current.x}px, ${current.y}px, 0) translate(-50%, -50%)`;
+      }
+      reqId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("mousemove", manageMouseMove);
+    reqId = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("mousemove", manageMouseMove);
+      cancelAnimationFrame(reqId);
+    };
+  }, []);
+
+  // --- PRELOADER ---
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
@@ -34,6 +81,11 @@ export default function App() {
       <div className="noise-overlay"></div>
       <motion.div className="progress-bar" style={{ scaleX }} />
 
+      {/* --- CUSTOM CURSOR ELEMENTS --- */}
+      <div ref={dotRef} className="cursor-dot"></div>
+      <div ref={outlineRef} className="cursor-outline"></div>
+      <div ref={glowRef} className="cursor-glow"></div>
+
       {/* --- PRELOADER --- */}
       <motion.div 
         className="preloader"
@@ -43,7 +95,7 @@ export default function App() {
       >
         <div className="loader-content">
           <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5 }} className="loader-line" />
-          <h2 className="loader-text">ORCHESTRATING EXCELLENCE</h2>
+          <h2 className="loader-text">RISHU JAISWAL</h2>
         </div>
       </motion.div>
 
@@ -63,11 +115,11 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.6 }}
         >
-          EXPERIENCE ARCHITECT
+          EXPERIENCE THE EXTRAORDINARY
         </motion.div>
       </section>
 
-      {/* --- VELOCITY MARQUEE (LAG FIXED) --- */}
+      {/* --- VELOCITY MARQUEE --- */}
       <section className="marquee-section">
         <VelocityText baseVelocity={-2}>Strategy Design Execution Hospitality</VelocityText>
         <VelocityText baseVelocity={2}>Luxury Corporate Bespoke Grandeur</VelocityText>
@@ -86,22 +138,22 @@ export default function App() {
         
         <div className="service-list">
           <ServiceItem 
-            title="Bespoke Weddings" 
+            title="SHADI WALA" 
             cat="Design & Production" 
             img="https://images.unsplash.com/photo-1519225421980-715cb0202128?q=80&w=1200"
           />
           <ServiceItem 
-            title="Corporate Galas" 
-            cat="Brand Experience" 
+            title="UTSAV WEDDINGS" 
+            cat="INFIELD PRODUCTION" 
             img="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200"
           />
           <ServiceItem 
-            title="Grand Production" 
-            cat="Technical Direction" 
+            title="DEVSHREE EVENTS" 
+            cat="OVERALL MANAGEMENT" 
             img="https://images.unsplash.com/photo-1470229722913-7ea038629667?q=80&w=1200"
           />
           <ServiceItem 
-            title="Artist Management" 
+            title="SPARKLE EVENTS" 
             cat="Logistics & Hospitality" 
             img="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1200"
           />
@@ -143,20 +195,16 @@ function HeroChar({ char, meaning, delay }) {
   );
 }
 
-// 2. OPTIMIZED VELOCITY MARQUEE
+// 2. OPTIMIZED VELOCITY MARQUEE (Fixes Lag)
 function VelocityText({ children, baseVelocity = 100 }) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   
-  // Smoother spring physics to prevent jitter
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 300 
-  });
-  
+  // Smoother physics settings
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 300 });
   const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false });
-  const x = useTransform(baseX, (v) => `${wrap(0, -25, v)}%`); // Wrap 0 to -25% for 4 items
+  const x = useTransform(baseX, (v) => `${wrap(0, -25, v)}%`);
   const directionFactor = useRef(1);
 
   useAnimationFrame((t, delta) => {
@@ -222,7 +270,7 @@ function ServiceItem({ title, cat, img }) {
   );
 }
 
-// 4. HORIZONTAL SCROLL
+// 4. HORIZONTAL SCROLL SECTION
 function HorizontalScrollSection() {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: targetRef });
@@ -233,11 +281,11 @@ function HorizontalScrollSection() {
       <div className="sticky-wrapper">
         <motion.h2 style={{ opacity: scrollYProgress }} className="horizontal-title">SELECTED WORKS</motion.h2>
         <motion.div style={{ x }} className="card-container">
-          <Card url="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000" title="The Royal Palace" />
-          <Card url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1000" title="Tech Summit 2024" />
-          <Card url="https://images.unsplash.com/photo-1514525253440-b393452e3720?q=80&w=1000" title="Fashion Week" />
-          <Card url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000" title="Concert Arena" />
-          <Card url="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000" title="Private Gala" />
+          <Card url="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000" title="LEELA PALACE" />
+          <Card url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1000" title="RAMBAGH" />
+          <Card url="https://images.unsplash.com/photo-1514525253440-b393452e3720?q=80&w=1000" title="FAIRMONT" />
+          <Card url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000" title="TAJ AMER" />
+          <Card url="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000" title="LE MERIDIEN" />
         </motion.div>
       </div>
     </section>
@@ -268,7 +316,7 @@ function ContactSection() {
         </motion.div>
         <div className="magnetic-area">
           <MagneticButton>
-            <a href="mailto:rishu@email.com" className="magnetic-link">EMAIL ME</a>
+            <a href="mailto:rish541232u@gmail.com" className="magnetic-link">EMAIL ME</a>
           </MagneticButton>
         </div>
       </div>
@@ -276,21 +324,32 @@ function ContactSection() {
   );
 }
 
+// Replace the old MagneticButton function with this one
 function MagneticButton({ children }) {
   const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+
   const handleMouse = (e) => {
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current.getBoundingClientRect();
-    setPosition({ x: (clientX - (left + width/2)) * 0.35, y: (clientY - (top + height/2)) * 0.35 });
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.35, y: middleY * 0.35 });
   };
+
   const reset = () => setPosition({ x: 0, y: 0 });
   const { x, y } = position;
+
   return (
     <motion.div
-      ref={ref} className="magnetic-wrap" animate={{ x, y }}
+      ref={ref}
+      className="magnetic-wrap"
+      animate={{ x, y }}
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      onMouseMove={handleMouse} onMouseLeave={reset}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      // Make the whole div clickable
+      onClick={() => window.location.href = "mailto:rishu@email.com"}
     >
       {children}
     </motion.div>
