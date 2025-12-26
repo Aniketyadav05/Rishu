@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@motionone/utils": "^10.18.0",
+    "framer-motion": "^12.23.26",
     "preact": "^10.27.2"
   },
   "devDependencies": {
