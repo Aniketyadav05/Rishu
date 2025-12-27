@@ -8,6 +8,11 @@ import {
   useAnimationFrame, 
   useMotionValue 
 } from 'framer-motion';
+import Img1 from './assets/Img1.jpeg';
+import Img2  from './assets/Img2.jpeg';
+import Img3  from './assets/Img3.jpeg';
+import Img4  from './assets/Img4.jpeg';
+import Img5  from './assets/Img5.jpeg';
 import './App.css';
 
 // --- UTILITY: Wrap Function (Internalized to fix import error) ---
@@ -140,22 +145,22 @@ export default function App() {
           <ServiceItem 
             title="SHADI WALA" 
             cat="Design & Production" 
-            img="https://images.unsplash.com/photo-1519225421980-715cb0202128?q=80&w=1200"
+            img={Img1}
           />
           <ServiceItem 
             title="UTSAV WEDDINGS" 
             cat="INFIELD PRODUCTION" 
-            img="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200"
+            img={Img2}  
           />
           <ServiceItem 
             title="DEVSHREE EVENTS" 
             cat="OVERALL MANAGEMENT" 
-            img="https://images.unsplash.com/photo-1470229722913-7ea038629667?q=80&w=1200"
+            img={Img3}
           />
           <ServiceItem 
             title="SPARKLE EVENTS" 
             cat="Logistics & Hospitality" 
-            img="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1200"
+            img={Img4}
           />
         </div>
       </section>
@@ -274,18 +279,18 @@ function ServiceItem({ title, cat, img }) {
 function HorizontalScrollSection() {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: targetRef });
-  const x = useTransform(scrollYProgress, [0, 1], ["1%", "-75%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["1%", "-90%"]);
 
   return (
     <section ref={targetRef} className="horizontal-scroll-section">
       <div className="sticky-wrapper">
         <motion.h2 style={{ opacity: scrollYProgress }} className="horizontal-title">SELECTED WORKS</motion.h2>
         <motion.div style={{ x }} className="card-container">
-          <Card url="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000" title="LEELA PALACE" />
-          <Card url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1000" title="RAMBAGH" />
-          <Card url="https://images.unsplash.com/photo-1514525253440-b393452e3720?q=80&w=1000" title="FAIRMONT" />
-          <Card url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000" title="TAJ AMER" />
-          <Card url="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1000" title="LE MERIDIEN" />
+          <Card url={Img1} title="LEELA PALACE" />
+          <Card url={Img2} title="RAMBAGH" />
+          <Card url={Img3} title="FAIRMONT" />
+          <Card url={Img4} title="TAJ AMER" />
+          <Card url={Img5} title="LE MERIDIEN" />
         </motion.div>
       </div>
     </section>
