@@ -287,10 +287,13 @@ function HorizontalScrollSection() {
         <motion.h2 style={{ opacity: scrollYProgress }} className="horizontal-title">SELECTED WORKS</motion.h2>
         <motion.div style={{ x }} className="card-container">
           <Card url={Img1} title="LEELA PALACE" />
-          <Card url={Img2} title="RAMBAGH" />
-          <Card url={Img3} title="FAIRMONT" />
-          <Card url={Img4} title="TAJ AMER" />
-          <Card url={Img5} title="LE MERIDIEN" />
+          <Card url={Img2} title="TAJ AMER" />
+          <Card url={Img3} title="LE MERIDIEN" />
+          <Card url={Img4} title="FAIRMONT" />
+          <Card url={Img5} title="RAMBAGH" />
+          
+          
+          
         </motion.div>
       </div>
     </section>
